@@ -31,7 +31,7 @@ function Game() {
     if (_board[position] !== null) {
       currentPlayer.moves.push(position)
       _board[position] = currentPlayer.symbol;
-      if (_chekForWinner(currentPlayer.moves)) {
+      if (_checkForWinner(currentPlayer.moves)) {
         winner = currentPlayer
         over = true;
         currentPlayer.score += 1
@@ -42,7 +42,7 @@ function Game() {
     return
   };
 
-  function _chekForWinner(moves) {
+  function _checkForWinner(moves) {
     for (let i = 0; i < _winningCombinations.length; i++) {
       if (moves.length !== _winningCombinations[i].length) {
         return false;
@@ -88,12 +88,3 @@ function Player(symbol) {
     score: 0
   }
 }
-
-let game = Game();
-console.table(game)
-game.makeMove(5)
-game.makeMove(3)
-game.makeMove(2)
-
-console.table(game.playerX)
-console.table(game.playerO)
