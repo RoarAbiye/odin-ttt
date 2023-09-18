@@ -1,22 +1,6 @@
-'use strict'
-
-function Game() {
-  let playerX = Player('x');
-  let playerO = Player('o');
-  let currentPlayer = playerX;
-  let winner = null;
-  let over = false;
-  let _board = Array.from(Array(9).keys());
-
-  /** winnign combinations for tic tac toe game
-   * e.g [0, 4, 8] will be 
-   * x | o | o
-   * ----------
-   * o | x | o
-   * ----------
-   * x | o | x
-    */
-  let _winningCombinations = [
+const GameBoard = (() => {
+  let board = Array.from({ length: 5 }, () => null);
+  const winningCombination = [
     [0, 1, 2],
     [3, 4, 5],
     [6, 7, 8],
@@ -27,64 +11,72 @@ function Game() {
     [2, 4, 6]
   ]
 
+  return {
+    board,
+    winningCombination
+  }
+
+})();
+
+function GameLogic(gameBoard) {
+  let playerX = Player("X", "x");
+  let playerO = Player("O", "o");
+  let currentPlayer = playerX
+  let game = gameBoard;
+
   function makeMove(position) {
-    if (_board[position] !== null) {
-      currentPlayer.moves.push(position)
-      _board[position] = currentPlayer.symbol;
-      if (_checkForWinner(currentPlayer.moves)) {
-        winner = currentPlayer
-        over = true;
-        currentPlayer.score += 1
-        return;
-      }
-      _switchPlayer()
-    }
-    return
-  };
+    game.board[position] = position;
+    currentPlayer.moves.push(position);
+    if (checkWin()) {
+      console.log(`${currentPlayer.name} wone`)
 
-  function _checkForWinner(moves) {
-    for (let i = 0; i < _winningCombinations.length; i++) {
-      if (moves.length !== _winningCombinations[i].length) {
-        return false;
-      }
-    }
-
-    _winningCombinations[i].sort()
-    moves.sort();
-
-    for (let j = 0; j < _winningCombinations.length; j++) {
-      if (_winningCombinations[j][i] !== moves[j]) {
-        return false
-      }
-    }
-    return true
-  }
-
-  function _switchPlayer() {
-    if (currentPlayer == playerO) {
-      currentPlayer = playerX;
-    }
-    else {
-      currentPlayer = playerO;
+    } else {
+      currentPlayer = currentPlayer === playerX ? playerO : playerX;
     }
   }
 
+  function checkWin() {
+    if (currentPlayer.moves.length != 3) return false
+    currentPlayer.moves.sort();
+    for (let i = 0; i < game.winningCombination.length; i++) {
+      for (let j = 0; j < game.winningCombination[i].length; j++) {
+        if (game.winningCombination[i][j] !== currentPlayer.moves[j])
+          return false
+      }
+      return true
+    }
+  }
+
+  // game state
+  // current player
+  // winner
+
+  //game logic methods
+  // update
+  // restart
+  // draw
 
   return {
     makeMove,
-    winner,
-    playerX,
-    playerO,
     currentPlayer,
-    over
+    playerX, playerO
   }
 }
 
-function Player(symbol) {
+function Player(name, symbol) {
   return {
-    name: `Player ${symbol.toUpperCase()}`,
+    name,
     symbol,
     moves: [],
-    score: 0
+    setName(newName) { this.name = newName },
   }
 }
+
+
+let newGame = GameLogic(GameBoard)
+
+newGame.makeMove(0)
+newGame.makeMove(3)
+newGame.makeMove(2)
+newGame.makeMove(5)
+newGame.makeMove(1)
