@@ -9,13 +9,6 @@ export function GameLogic() {
 
   function makeMove(position) {
 
-
-    if (gameBoard.isFull()) {
-      gameBoard.rounds++
-      console.log("draw")
-      return
-    }
-
     gameBoard.board[position] = position;
 
     if (gameBoard.checkWin(currentPlayer)) {
@@ -29,8 +22,32 @@ export function GameLogic() {
     }
   }
 
+  if (gameBoard.isFull()) {
+    gameBoard.rounds++
+    console.log("draw")
+    return
+  }
+
+
+
+  function createCell() {
+    let cellList = []
+    gameBoard.board.forEach((cell, index) => {
+      let celeElement = document.createElement("div");
+      celeElement.setAttribute("class", "cell nf");
+      celeElement.setAttribute("id", index)
+      cellList.push(celeElement)
+      celeElement.addEventListener("click", () => {
+        celeElement.textContent = currentPlayer.symbol
+        makeMove(index)
+      })
+    })
+    return cellList;
+  }
+
   return {
     makeMove,
+    createCell,
     currentPlayer,
     playerX, playerO
   }
